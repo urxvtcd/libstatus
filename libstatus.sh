@@ -264,17 +264,16 @@ print_current_and_target() (
 			return
 		fi
 		target=$(sed -e "s|ref: refs/remotes/||" "${target_ref_file}")
+
+		if test "${target}" = "${UPSTREAM}"; then
+			# Don't print anything if the default target was used and it's the
+			# same as current branch's upstream. It's not our target then.
+			return
+		fi
 	fi
 
 	if test -z "${target}"; then
 		# Target not supplied by user, and not found on our own.
-		return
-	fi
-
-	current_branch_hash="$(git rev-parse "${CURRENT}")"
-	target_branch_hash="$(git rev-parse "${target}")"
-
-	if test "${current_branch_hash}" = "${target_branch_hash}"; then
 		return
 	fi
 
