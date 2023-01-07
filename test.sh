@@ -95,6 +95,7 @@ test_hint_untracked_upstream() (
 	commit "${repo}" "Initial commit"
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet origin master
+	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
@@ -143,6 +144,7 @@ test_correct_upstream() (
 	commit "${repo}" "Initial commit"
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet --set-upstream origin master
+	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
@@ -159,7 +161,7 @@ test_ahead_of_upstream() (
 			< Second commit
 			| c6193d9 David Plowie 53 years ago HEAD -> master
 			o Initial commit
-			  6a103bc David Plowie 53 years ago origin/master
+			  6a103bc David Plowie 53 years ago origin/master, origin/HEAD
 		EOF
 	)"
 
@@ -169,6 +171,7 @@ test_ahead_of_upstream() (
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet --set-upstream origin master
 	commit "${repo}" "Second commit"
+	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
@@ -278,6 +281,36 @@ test_rebase_status() (
 	}
 )
 
+test_remote_head_file_missing_hint() (
+	expected="$(
+		cat <<-EOF
+			## master...(no upstream)
+
+			hint: file .git/refs/remotes/origin/HEAD not found.
+			hint: This file is used to guess the branch on a remote repository this branch will
+			hint: be merged to. The file can be missing if the remote was added to the repository
+			hint: that already existed locally, as opposed to creating a local repository by
+			hint: cloning from a remote. If the main branch of the remote is called master, you
+			hint: can fix the issue by running this command:
+			hint:   echo 'ref: refs/remotes/origin/master' > .git/refs/remotes/origin/HEAD
+			hint: This is merely a hindrance to libstatus merge target guessing. It doesn't
+			hint: impact any other git operations.
+		EOF
+	)"
+
+	origin="$(new_repo --bare)"
+	repo="$(new_repo)"
+	commit "${repo}" "Initial commit"
+	git -C "${repo}" remote add origin "${origin}"
+
+	actual="$(git -C "${repo}" s)"
+
+	test "$actual" = "$expected" || {
+		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
+		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
+	}
+)
+
 if test -z "${1}"; then
 	echo test_after_init && test_after_init
 	echo test_after_first_commit && test_after_first_commit
@@ -287,6 +320,7 @@ if test -z "${1}"; then
 	echo test_rebase_lost_merges_hint && test_rebase_lost_merges_hint
 	echo test_intent_to_add_hint && test_intent_to_add_hint
 	echo test_rebase_status && test_rebase_status
+	echo test_remote_head_file_missing_hint && test_remote_head_file_missing_hint
 else
 	"${1}"
 fi

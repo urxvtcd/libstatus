@@ -261,6 +261,17 @@ print_current_and_target() (
 
 		target_ref_file="$(git rev-parse --git-path refs/remotes/"${REMOTE}"/HEAD)"
 		if ! test -e "${target_ref_file}"; then
+			printf "%s" "${COLOR_ADVICE}"
+			printf "hint: file %s not found.\n" "${target_ref_file}"
+			printf "hint: This file is used to guess the branch on a remote repository this branch will\n"
+			printf "hint: be merged to. The file can be missing if the remote was added to the repository\n"
+			printf "hint: that already existed locally, as opposed to creating a local repository by\n"
+			printf "hint: cloning from a remote. If the main branch of the remote is called master, you\n"
+			printf "hint: can fix the issue by running this command:\n"
+			printf "hint:   echo 'ref: refs/remotes/%s/master' > .git/refs/remotes/%s/HEAD\n" "${REMOTE}" "${REMOTE}"
+			printf "hint: This is merely a hindrance to libstatus merge target guessing. It doesn't\n"
+			printf "hint: impact any other git operations.\n"
+			printf "%s\n" "${WHITE}"
 			return
 		fi
 		target=$(sed -e "s|ref: refs/remotes/||" "${target_ref_file}")
