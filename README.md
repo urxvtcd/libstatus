@@ -13,12 +13,12 @@ information online.
 
 Currently implemented features:
   - worktree status (using `git status --short`),
-  - graph of commits on your branch and its remote counterpart
-  - graph of commits on your branch and the branch it'll be merged to (using remote HEAD, can be overridden)
-  - list of stashes along with listing of their changes
-  - worktree summary
-  - submodule status and summary
-  - rebase progress status
-  - hints about remote branch tracking
-  - hint about merges lost when rebasing without `--rebase-merges`
-  - hint about files lost from tracking due to reset without `--intent-to-add`
+  - graph of commits on your branch and its remote counterpart,
+  - graph of commits on your branch and the branch it'll be merged to (using remote HEAD, can be overridden),
+  - list of stashes along with listing of their changes,
+  - worktree summary,
+  - submodule status and summary,
+  - rebase progress status,
+  - hints about remote branch tracking,
+  - hint about merges lost when rebasing without `--rebase-merges`,
+  - hint about files lost from tracking due to reset without `--intent-to-add`.
