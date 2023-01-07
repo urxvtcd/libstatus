@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+
+if ! git rev-parse --git-dir >/dev/null; then
+	exit 1
+fi
+
+while getopts t:r: flag; do
+	case "${flag}" in
+	r) REMOTE="${OPTARG}" ;;
+	t) merge_target="${OPTARG}" ;;
+	*) exit 1 ;;
+	esac
+done
+
+# clear screen for interactive use
+test -t 1 && clear -x
+
+# shellcheck source=libstatus.sh
+. "$(dirname "${0}")/libstatus.sh"
+
+init
+
+print_tree_status
+
+print_rebase_summary
+
+print_current_and_upstream
+print_current_and_target "${merge_target}"
+
+if are_there_submodules; then
+	print_submodule_status
+	print_submodule_summary
+fi
+
+print_stash
+print_worktree_list
+
+print_untracked_hint
+print_intent_to_add_hint
+print_mistracking_hint
+print_rebase_lost_merges_hint
