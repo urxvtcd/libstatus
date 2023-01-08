@@ -6,10 +6,19 @@ replacement of `git status`.
 The functionality is implemented in the `libstatus.sh` file, which serves as
 a library intended to be sourced by some other script.
 
-Two example scripts (`git-s` and `git-ss`) using the library are provided. To
+Two example scripts using the library are provided. Check them out:
+  - `git-s` using probably all of the feautres of the library,
+  - `git-ss` as above, but also using columnar layout to take advantage of
+    fullscreen terminal window.
+
+I personally use them daily, and they probably fulfill your needs as well. To
 use them, you need to make sure they are available in your `$PATH`. Configuring
 the `$PATH` variable is out of scope of this README, but there's plenty
 information online.
+
+If the provided scripts don't suit you, I encourage you to hack them to your
+liking. Note that if git sees a `git-foo` file in your path, you can execute it
+without typing the dash, just `git foo`.
 
 Currently implemented features:
   - working directory status (using `git status --short` condensed output; see `git help status` for more info),
