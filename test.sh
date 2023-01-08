@@ -48,7 +48,7 @@ test_after_init() (
 	repo="$(new_repo)"
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "%s\n\nwas different from\n\n%s" "${actual}" "${expected}"
 		printf "repo: %s\n\n" "${repo}"
 	}
@@ -66,7 +66,7 @@ test_after_first_commit() (
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "repo: %s\n\n" "${repo}"
 	}
@@ -95,11 +95,11 @@ test_hint_untracked_upstream() (
 	commit "${repo}" "Initial commit"
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet origin master
-	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
+	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
 	}
@@ -123,11 +123,11 @@ test_hint_mistracked_upstream() (
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet origin master
 	git -C "${repo}" push --quiet --set-upstream origin master:other
-	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
+	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
 	}
@@ -145,11 +145,11 @@ test_correct_upstream() (
 	commit "${repo}" "Initial commit"
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet --set-upstream origin master
-	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
+	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
 	}
@@ -172,11 +172,11 @@ test_ahead_of_upstream() (
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet --set-upstream origin master
 	commit "${repo}" "Second commit"
-	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
+	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
 	}
@@ -216,7 +216,7 @@ test_rebase_lost_merges_hint() (
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "repo: %s\n\n" "${repo}"
 	}
@@ -248,7 +248,7 @@ test_intent_to_add_hint() (
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "repo: %s\n\n" "${repo}"
 	}
@@ -276,7 +276,7 @@ test_rebase_status() (
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "repo: %s\n\n" "${repo}"
 	}
@@ -306,7 +306,7 @@ test_remote_head_file_missing_hint() (
 
 	actual="$(git -C "${repo}" s)"
 
-	test "$actual" = "$expected" || {
+	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
 		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
 	}
