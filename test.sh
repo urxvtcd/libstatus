@@ -123,6 +123,7 @@ test_hint_mistracked_upstream() (
 	git -C "${repo}" remote add origin "${origin}"
 	git -C "${repo}" push --quiet origin master
 	git -C "${repo}" push --quiet --set-upstream origin master:other
+	echo 'ref: refs/remotes/origin/master' > "${repo}/.git/refs/remotes/origin/HEAD"
 
 	actual="$(git -C "${repo}" s)"
 
@@ -312,15 +313,9 @@ test_remote_head_file_missing_hint() (
 )
 
 if test -z "${1}"; then
-	echo test_after_init && test_after_init
-	echo test_after_first_commit && test_after_first_commit
-	echo test_hint_untracked_upstream && test_hint_untracked_upstream
-	echo test_correct_upstream && test_correct_upstream
-	echo test_ahead_of_upstream && test_ahead_of_upstream
-	echo test_rebase_lost_merges_hint && test_rebase_lost_merges_hint
-	echo test_intent_to_add_hint && test_intent_to_add_hint
-	echo test_rebase_status && test_rebase_status
-	echo test_remote_head_file_missing_hint && test_remote_head_file_missing_hint
+	grep "^test_[A-Za-z0-9]*\(\)" "${0}" | sed 's/^\([A-Za-z0-9_]*\).*/\1/' | while read -r testcase; do
+		echo "${testcase}" && "${testcase}"
+	done
 else
 	"${1}"
 fi
