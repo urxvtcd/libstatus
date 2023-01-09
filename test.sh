@@ -8,6 +8,7 @@ commit() (
 		git \
 		-C "${repo}" \
 		commit \
+		--all \
 		--quiet \
 		--allow-empty \
 		--date="@0 +0000" \
@@ -305,6 +306,78 @@ test_remote_head_file_missing_hint() (
 	git -C "${repo}" remote add origin "${origin}"
 
 	actual="$(git -C "${repo}" repo-status)"
+
+	test "${actual}" = "${expected}" || {
+		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
+		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
+	}
+)
+
+test_conflicts_rebase() (
+	expected="$(
+		cat <<-EOF
+			## conflict summary
+			Conflicts in some-file caused by commits:
+			  4c043f6 Change to b David Plowie
+		EOF
+	)"
+
+	origin="$(new_repo --bare)"
+	repo="$(new_repo)"
+	echo a >"${repo}/some-file"
+	git -C "${repo}" add some-file
+	commit "${repo}" "Initial commit"
+
+	echo b >"${repo}/some-file"
+	commit "${repo}" "Change to b"
+
+	git -C "${repo}" checkout --quiet -b change-c @^
+	echo c >"${repo}/some-file"
+	commit "${repo}" "Change to c"
+
+	echo d >"${repo}/some-other-file"
+	git -C "${repo}" add some-other-file
+	commit "${repo}" "Unrelated change"
+
+	git -C "${repo}" rebase master >/dev/null 2>/dev/null
+
+	actual="$(git -C "${repo}" conflicts)"
+
+	test "${actual}" = "${expected}" || {
+		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
+		printf "origin: %s\nrepo: %s\n\n" "${origin}" "${repo}"
+	}
+)
+
+test_conflicts_merge() (
+	expected="$(
+		cat <<-EOF
+			## conflict summary
+			Conflicts in some-file caused by commits:
+			  4c043f6 Change to b David Plowie
+		EOF
+	)"
+
+	origin="$(new_repo --bare)"
+	repo="$(new_repo)"
+	echo a >"${repo}/some-file"
+	git -C "${repo}" add some-file
+	commit "${repo}" "Initial commit"
+
+	echo b >"${repo}/some-file"
+	commit "${repo}" "Change to b"
+
+	echo d >"${repo}/some-other-file"
+	git -C "${repo}" add some-other-file
+	commit "${repo}" "Unrelated change"
+
+	git -C "${repo}" checkout --quiet -b change-c @^^
+	echo c >"${repo}/some-file"
+	commit "${repo}" "Change to c"
+
+	git -C "${repo}" merge master >/dev/null 2>/dev/null
+
+	actual="$(git -C "${repo}" conflicts)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"

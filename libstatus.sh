@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# TODO: replace mktemp (not posix)
+# TODO: topo-sort commits in conflict summary
+
 set_foreground_color() (
 	# See https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
 
@@ -50,6 +53,13 @@ STASH_FORMAT_STR="${STASH_FORMAT_STR}%s "             # subject
 STASH_FORMAT_STR="${STASH_FORMAT_STR}%C(brightblack)" # set color to gray
 STASH_FORMAT_STR="${STASH_FORMAT_STR}%cr"             # relative creation date
 STASH_FORMAT_STR="${STASH_FORMAT_STR}%C(reset)"       # reset color setting
+
+CONFLICT_BLAME_FORMAT=""                                        # set variable to empty
+CONFLICT_BLAME_FORMAT="${CONFLICT_BLAME_FORMAT}  %h "           # short commit hash
+CONFLICT_BLAME_FORMAT="${CONFLICT_BLAME_FORMAT}%s "             # commit message subject
+CONFLICT_BLAME_FORMAT="${CONFLICT_BLAME_FORMAT}%C(brightblack)" # change color to gray
+CONFLICT_BLAME_FORMAT="${CONFLICT_BLAME_FORMAT}%cn"             # commiter name
+CONFLICT_BLAME_FORMAT="${CONFLICT_BLAME_FORMAT}%C(reset)"       # reset color setting
 
 # The number of commits printed by git log graphs. Export a different value to override.
 GRAPH_LENGTH_LIMIT="${GRAPH_LENGTH_LIMIT:-10}"
@@ -430,6 +440,7 @@ print_rebase_summary() (
 
 	rebase_dir="$(git rev-parse --git-path rebase-merge)"
 
+	# TODO: fix marks on empty lines when rebasing merges
 	print_rebase_entries "${GREEN}" <"${rebase_dir}/done" \
 		| sed -ne '$! s/^/ ✓ /p'
 	print_rebase_entries "${YELLOW}" <"${rebase_dir}/done" \
@@ -594,6 +605,80 @@ print_rebase_lost_merges_hint() (
 		printf "hint: perform a git commit --amend or a no-op git reset."
 		printf "%s\n\n" "${WHITE}"
 	fi
+)
+
+print_conflict_summary() (
+	pathspec="${1:-.}"
+
+	if ! there_are_conflicts; then
+		return
+	fi
+
+	printf "## %sconflict summary%s\n" "${YELLOW}" "${WHITE}"
+
+	if there_is_rebase_in_progress; then
+		old_tip="$(git reflog | sed -ne '/rebase (start)/ {n;s/ .*//;p;q}')"
+		new_base=$(git reflog | sed -ne "/rebase (start)/ {s/ .*//;p;q}")
+
+		number_of_gained_commits="$(git rev-list --count "${old_tip}..${new_base}")"
+
+		if test "${number_of_gained_commits}" = 0; then
+			printf "%s" "${COLOR_ADVICE}"
+			printf "hint: There are conflicts, but they didn't happen because of commits introduced by new\n"
+			printf "hint: base. It probably means you didn't pass --rebase-merges flag, resulting in merge\n"
+			printf "hint: commits being dropped.\n"
+			printf "%s\n" "${WHITE}"
+			return
+		fi
+
+		print_conflict_blame "${old_tip}" "${new_base}" "${pathspec}"
+
+	elif there_is_merge_in_progress; then
+		print_conflict_blame @ MERGE_HEAD "${pathspec}"
+	else
+		echo "Conflicts other than merge or rebase are not supported yet"
+	fi
+)
+
+there_is_merge_in_progress() (
+	merge_head_file="$(git rev-parse --git-path MERGE_HEAD)"
+	test -e "${merge_head_file}"
+)
+
+print_conflict_blame() (
+	head_before_operation="${1}"
+	head_causing_conflicts="${2}"
+	pathspec="${3}"
+
+	# The commits introduced by the other side that conflict with our changes.
+	gained_commits_file="$(mktemp)"
+	git rev-list "${head_before_operation}..${head_causing_conflicts}" >"${gained_commits_file}"
+
+	git ls-files --unmerged -- "${pathspec}" \
+		| cut -f 2 \
+		| uniq \
+		| while read -r conflicting_file; do
+			print_gained_commits_for_file \
+				"${head_causing_conflicts}" \
+				"${conflicting_file}" \
+				"${gained_commits_file}"
+		done
+
+	rm "${gained_commits_file}"
+	echo
+)
+
+print_gained_commits_for_file() (
+	head_causing_conflicts="${1}"
+	conflicting_file="${2}"
+	gained_commits_file="${3}"
+
+	printf "Conflicts in %s caused by commits:\n" "${RED}${conflicting_file}${WHITE}"
+	git blame -sl "${head_causing_conflicts}" -- "${conflicting_file}" \
+		| cut -d " " -f 1 \
+		| grep -xf "${gained_commits_file}" \
+		| git log --stdin --no-walk=sorted --reverse --pretty=format:"${CONFLICT_BLAME_FORMAT}"
+	echo
 )
 
 max_line_length() (

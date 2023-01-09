@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+pathspec="${1}"
+
+if ! git rev-parse --git-dir >/dev/null; then
+	exit 1
+fi
+
+# clear screen for interactive use
+test -t 1 && clear -x
+
+# shellcheck source=libstatus.sh
+. "$(dirname "${0}")/libstatus.sh"
+
+init
+
+print_conflict_summary "${pathspec}"
