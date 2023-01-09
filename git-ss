@@ -16,7 +16,7 @@ done
 test -t 1 && clear -x
 
 # shellcheck source=libstatus.sh
-. ~/projects/libstatus/libstatus.sh
+. "$(dirname "${0}")/libstatus.sh"
 
 init
 
