@@ -313,9 +313,12 @@ test_remote_head_file_missing_hint() (
 )
 
 if test -z "${1}"; then
-	grep "^test_[A-Za-z0-9]*\(\)" "${0}" | sed 's/^\([A-Za-z0-9_]*\).*/\1/' | while read -r testcase; do
-		echo "${testcase}" && "${testcase}"
-	done
+	# Run all the tests.
+	sed -ne 's|^\(test_[A-Za-z0-9_]*\).*|\1|p' "${0}" \
+		| while read -r testcase; do
+			echo "${testcase}" && "${testcase}"
+		done
 else
+	# Run the test given as argument.
 	"${1}"
 fi
