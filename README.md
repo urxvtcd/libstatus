@@ -6,17 +6,15 @@ replacement of `git status`.
 The functionality is implemented in the `libstatus.sh` file, which serves as
 a library intended to be sourced by some other script.
 
-Two example scripts using the library are provided. Check them out:
-  - `git-s` using probably all of the feautres of the library,
-  - `git-ss` as above, but also using columnar layout to take advantage of
-    fullscreen terminal window.
+One example script, `git-s`, using all of the features library is
+provided. Check it out.
 
-I personally use them daily, and they probably fulfill your needs as well. To
-use them, you need to make sure they are available in your `$PATH`. Configuring
+I personally use it daily, and it probably fulfills your needs as well. To
+use it, you need to make sure it's available in your `$PATH`. Configuring
 the `$PATH` variable is out of scope of this README, but there's plenty
 information online.
 
-If the provided scripts don't suit you, I encourage you to hack them to your
+If the provided script doesn't suit you, I encourage you to hack it to your
 liking. Note that if git sees a `git-foo` file in your path, you can execute it
 without typing the dash, just `git foo`.
 

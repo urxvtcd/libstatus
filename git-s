@@ -4,10 +4,11 @@ if ! git rev-parse --git-dir >/dev/null; then
 	exit 1
 fi
 
-while getopts t:r: flag; do
+while getopts t:r:w flag; do
 	case "${flag}" in
 	r) REMOTE="${OPTARG}" ;;
 	t) merge_target="${OPTARG}" ;;
+	w) wide="true" ;;
 	*) exit 1 ;;
 	esac
 done
@@ -20,20 +21,45 @@ test -t 1 && clear -x
 
 init
 
-print_tree_status
+if test -z "${wide}"; then
+	print_tree_status
 
-print_rebase_summary
+	print_rebase_summary
 
-print_current_and_upstream
-print_current_and_target "${merge_target}"
+	print_current_and_upstream
+	print_current_and_target "${merge_target}"
 
-if are_there_submodules; then
-	print_submodule_status
-	print_submodule_summary
+	if are_there_submodules; then
+		print_submodule_status
+		print_submodule_summary
+	fi
+
+	print_stash
+	print_worktree_list
+else
+	left="$(mktemp)"
+	right="$(mktemp)"
+	{
+		print_tree_status
+		print_current_and_upstream
+	} >"${left}"
+	{
+		print_worktree_list
+		print_current_and_target "${merge_target}"
+	} >"${right}"
+
+	columnize "${left}" "${right}"
+
+	if are_there_submodules; then
+		print_submodule_status >"${left}"
+		print_submodule_summary >"${right}"
+		columnize "${left}" "${right}"
+	fi
+
+	rm "${left}" "${right}"
+
+	print_stash
 fi
-
-print_stash
-print_worktree_list
 
 print_untracked_hint
 print_intent_to_add_hint
