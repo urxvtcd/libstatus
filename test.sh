@@ -46,7 +46,7 @@ test_after_init() (
 	)"
 
 	repo="$(new_repo)"
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "%s\n\nwas different from\n\n%s" "${actual}" "${expected}"
@@ -64,7 +64,7 @@ test_after_first_commit() (
 	repo="$(new_repo)"
 	commit "${repo}" "Initial commit"
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -97,7 +97,7 @@ test_hint_untracked_upstream() (
 	git -C "${repo}" push --quiet origin master
 	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -125,7 +125,7 @@ test_hint_mistracked_upstream() (
 	git -C "${repo}" push --quiet --set-upstream origin master:other
 	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -147,7 +147,7 @@ test_correct_upstream() (
 	git -C "${repo}" push --quiet --set-upstream origin master
 	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -174,7 +174,7 @@ test_ahead_of_upstream() (
 	commit "${repo}" "Second commit"
 	echo 'ref: refs/remotes/origin/master' >"${repo}/.git/refs/remotes/origin/HEAD"
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -214,7 +214,7 @@ test_rebase_lost_merges_hint() (
 		GIT_COMMITTER_DATE="@1 +0000" \
 		git -C "${repo}" rebase --quiet master
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -246,7 +246,7 @@ test_intent_to_add_hint() (
 	commit "${repo}" "Second commit"
 	git -C "${repo}" reset @^
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -274,7 +274,7 @@ test_rebase_status() (
 		GIT_SEQUENCE_EDITOR="printf '2s/pick/edit/\nwq\n' | vi -e" \
 		git -C "${repo}" rebase -i --root --quiet 2>/dev/null
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
@@ -304,7 +304,7 @@ test_remote_head_file_missing_hint() (
 	commit "${repo}" "Initial commit"
 	git -C "${repo}" remote add origin "${origin}"
 
-	actual="$(git -C "${repo}" s)"
+	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
 		printf "\noutput\n\n%s\n\nwas different from\n\n%s\n\n" "${actual}" "${expected}"
