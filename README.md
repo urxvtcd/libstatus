@@ -7,13 +7,17 @@ The functionality is implemented in the `libstatus.sh` file, which serves as
 a library intended to be sourced by some other script.
 
 One example script, `git-repo-status`, using all of the features library is
-provided. Check it out. (Typing `git repo-status` over and over again will
-quickly get boring, so you'll probably want to define an alias for it.)
+provided. Check it out. Running `git repo-status -h` will print help, but most
+likely you'll just run the command without any arguments and it'll figure stuff
+out for you.
 
-I personally use it daily, and it probably fulfills your needs as well. To
-use it, you need to make sure it's available in your `$PATH`. Configuring
-the `$PATH` variable is out of scope of this README, but there's plenty
-information online.
+Typing `git repo-status` over and over again will quickly get boring, so you'll
+probably want to define an alias for it.
+
+I personally use `git-repo-status` daily, and it probably fulfills your needs
+as well. To use it, you need to make sure it's available in your `$PATH`.
+Configuring the `$PATH` variable is out of scope of this README, but there's
+plenty information online.
 
 If the provided script doesn't suit you, I encourage you to hack it to your
 liking. Note that if git sees a `git-foo` file in your path, you can execute it

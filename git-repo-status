@@ -4,8 +4,38 @@ if ! git rev-parse --git-dir >/dev/null; then
 	exit 1
 fi
 
-while getopts t:r:w flag; do
+print_help() (
+	cat <<-EOF
+	usage: git repo-status [general options]
+	   or: git repo-status -h
+
+	  -h
+	      Print this help screen.
+
+	General options:
+
+	  -r <remote>
+	      Specifies the name of the remote used to gather
+	      and print information. If not given, the following
+	      guess is performed:
+	        1. If there is only one remote, use that.
+	        2. If there is more than one remote,
+	           and origin is among them, use origin.
+	        3. Otherwise, no remote is chosen.
+
+	  -t <branch>
+	      Specifies the target branch, i.e. the branch to which
+	      the current branch will be merged. If not given,
+	      <remote>/HEAD is used.
+
+	  -w
+	        Use wide mode, printing output in columns.
+EOF
+)
+
+while getopts t:r:wh flag; do
 	case "${flag}" in
+	h) print_help; exit ;;
 	r) REMOTE="${OPTARG}" ;;
 	t) merge_target="${OPTARG}" ;;
 	w) wide="true" ;;
