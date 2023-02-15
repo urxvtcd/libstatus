@@ -23,6 +23,7 @@ merge() (
 		git \
 		-C "${repo}" \
 		merge \
+		--no-log \
 		--quiet \
 		--no-edit \
 		"${branch}"
@@ -188,7 +189,7 @@ test_rebase_lost_merges_hint() (
 			## topic...(no upstream; no remote)
 
 			hint: the branch before the rebase contained these merge commits:
-			hint:   b798811 Merge branch 'other' into topic
+			hint:   853f411 Merge branch 'other' into topic
 			hint: but the branch after the rebase contains no merge commits. this might be
 			hint: intentional, but can also mean that merge commits were lost during the
 			hint: rebase because you didn't pass the --rebase-merges flag. if this was not
