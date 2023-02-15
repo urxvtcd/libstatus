@@ -413,7 +413,7 @@ there_is_rebase_in_progress() (
 
 there_are_conflicts() (
 	number_of_conflicting_files="$(git ls-files --unmerged | wc -l)"
-	test "${number_of_conflicting_files}" != 0
+	test $((number_of_conflicting_files)) != 0
 )
 
 print_rebase_summary() (
@@ -579,7 +579,7 @@ print_rebase_lost_merges_hint() (
 	merges_old="$(git log --oneline --merges "${new_base}..${old_tip}" | wc -l)"
 	merges_new="$(git log --oneline --merges "${new_base}..${new_tip}" | wc -l)"
 
-	if test "${merges_new}" = 0 && test "${merges_old}" != 0; then
+	if test "$((merges_new))" = 0 && test "$((merges_old))" != 0; then
 		printf "%s" "${COLOR_ADVICE}"
 		printf "hint: the branch before the rebase contained these merge commits:\n"
 		git log --oneline --merges "${new_base}..${old_tip}" | sed -e "s/^/hint:   /"
