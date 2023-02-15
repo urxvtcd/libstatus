@@ -270,9 +270,10 @@ test_rebase_status() (
 	commit "${repo}" "Second commit"
 	commit "${repo}" "Third commit"
 
-	GIT_AUTHOR_DATE="@1 +0000" \
+	# ed is the standard text editor
+	GIT_SEQUENCE_EDITOR="printf '2s/pick/edit/\nw\nq\n' | ed >/dev/null 2>/dev/null" \
 		GIT_COMMITTER_DATE="@1 +0000" \
-		GIT_SEQUENCE_EDITOR="printf '2s/pick/edit/\nwq\n' | vi -e" \
+		GIT_AUTHOR_DATE="@1 +0000" \
 		git -C "${repo}" rebase -i --root --quiet 2>/dev/null
 
 	actual="$(git -C "${repo}" repo-status)"
