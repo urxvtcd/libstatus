@@ -624,8 +624,8 @@ columnize() (
 	done
 
 	paste "$@" | awk \
-		--field-separator '\t' \
-		--assign column_widths="${column_widths}" \
+		-F '\t' \
+		-v column_widths="${column_widths}" \
 		'
 		BEGIN {
 			split(column_widths, widths, " ")
