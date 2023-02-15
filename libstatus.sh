@@ -572,9 +572,9 @@ print_rebase_lost_merges_hint() (
 		return
 	fi
 
-	old_tip="$(git reflog | sed -ne '/rebase (start)/ {n;s/ .*//;p;q}')"
+	old_tip="$(git reflog | sed -ne '/rebase (start)/ {n;s/ .*//;p;q;}')"
 	new_tip="@"
-	new_base=$(git reflog | sed -ne "/rebase (start)/ {s/ .*//;p;q}")
+	new_base="$(git reflog | sed -ne '/rebase (start)/ {s/ .*//;p;q;}')"
 
 	merges_old="$(git log --oneline --merges "${new_base}..${old_tip}" | wc -l)"
 	merges_new="$(git log --oneline --merges "${new_base}..${new_tip}" | wc -l)"
