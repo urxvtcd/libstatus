@@ -293,9 +293,8 @@ test_remote_head_file_missing_hint() (
 			hint: This file is used to guess the branch on a remote repository this branch will
 			hint: be merged to. The file can be missing if the remote was added to the repository
 			hint: that already existed locally, as opposed to creating a local repository by
-			hint: cloning from a remote. If the main branch of the remote is called master, you
-			hint: can fix the issue by running this command:
-			hint:   echo 'ref: refs/remotes/origin/master' > .git/refs/remotes/origin/HEAD
+			hint: cloning from a remote. You can fix the issue by running this command:
+			hint:   git remote set-head origin --auto
 			hint: This is merely a hindrance to libstatus merge target guessing. It doesn't
 			hint: impact any other git operations.
 		EOF
