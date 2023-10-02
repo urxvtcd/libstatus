@@ -161,9 +161,9 @@ test_ahead_of_upstream() (
 		cat <<-EOF
 			## master...origin/master (1/0)
 			< Second commit
-			| c6193d9 David Plowie 53 years ago HEAD -> master
+			| c6193d9 David Plowie 54 years ago HEAD -> master
 			o Initial commit
-			  6a103bc David Plowie 53 years ago origin/master, origin/HEAD
+			  6a103bc David Plowie 54 years ago origin/master, origin/HEAD
 		EOF
 	)"
 
