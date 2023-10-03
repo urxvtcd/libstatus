@@ -50,7 +50,7 @@ test_after_init() (
 	actual="$(git -C "${repo}" repo-status)"
 
 	test "${actual}" = "${expected}" || {
-		printf "%s\n\nwas different from\n\n%s" "${actual}" "${expected}"
+		printf "%s\n\nwas different from\n\n%s\n" "${actual}" "${expected}"
 		printf "repo: %s\n\n" "${repo}"
 	}
 )
