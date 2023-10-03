@@ -17,6 +17,7 @@ commit() (
 merge() (
 	repo="${1}"
 	branch="${2}"
+	shift 2
 
 	GIT_AUTHOR_DATE="@1 +0000" \
 		GIT_COMMITTER_DATE="@1 +0000" \
@@ -26,6 +27,7 @@ merge() (
 		--no-log \
 		--quiet \
 		--no-edit \
+		"${@}" \
 		"${branch}"
 )
 
@@ -78,7 +80,7 @@ test_hint_untracked_upstream() (
 		cat <<-EOF
 			## master...origin/master (0/0)
 
-			hint: origin/master branch exists, but isn't marked as upstream.
+			hint: ‘origin/master’ branch exists, but isn’t marked as upstream.
 			hint: It is recommended to run:
 			hint:
 			hint:   git branch --set-upstream-to origin/master
@@ -111,8 +113,8 @@ test_hint_mistracked_upstream() (
 		cat <<-EOF
 			## master...origin/master (0/0)
 
-			hint: current 'master' branch tracks 'origin/other',
-			hint: but probably should track 'origin/master' instead.
+			hint: current ‘master’ branch tracks ‘origin/other’,
+			hint: but probably should track ‘origin/master’ instead.
 			hint: run this command to fix this:
 			hint:   git branch --set-upstream-to origin/master
 		EOF
@@ -188,17 +190,17 @@ test_rebase_lost_merges_hint() (
 		cat <<-EOF
 			## topic...(no upstream; no remote)
 
-			hint: the branch before the rebase contained these merge commits:
-			hint:   853f411 Merge branch 'other' into topic
-			hint: but the branch after the rebase contains no merge commits. this might be
+			hint: The branch before the rebase contained these merge commits:
+			hint:   f4a10dd Merge other branch
+			hint: but the branch after the rebase contains no merge commits. This might be
 			hint: intentional, but can also mean that merge commits were lost during the
-			hint: rebase because you didn't pass the --rebase-merges flag. if this was not
+			hint: rebase because you didn’t pass the ‘--rebase-merges’ flag. If this was not
 			hint: intentional, you can run
 			hint:   git reset --hard ORIG_HEAD
 			hint: to reset the branch to the state before the rebase, and attempt the rebase
 			hint: again.
 			hint: If this was intentional and you wish this hint went away,
-			hint: perform a git commit --amend or a no-op git reset.
+			hint: run ‘git commit --amend’ or perform a no-op ‘git reset’.
 		EOF
 	)"
 
@@ -209,7 +211,7 @@ test_rebase_lost_merges_hint() (
 	git -C "${repo}" checkout --quiet -b other master
 	commit "${repo}" "Third commit"
 	git -C "${repo}" checkout --quiet -
-	merge "${repo}" other
+	merge "${repo}" other -m "Merge other branch"
 
 	GIT_AUTHOR_DATE="@1 +0000" \
 		GIT_COMMITTER_DATE="@1 +0000" \
@@ -231,11 +233,11 @@ test_intent_to_add_hint() (
 
 			## master...(no upstream; no remote)
 
-			hint: Your last reset moved HEAD from a revision that tracked these paths:
+			hint: Your last reset moved ‘HEAD’ from a revision that tracked these paths:
 			hint:    some-file
-			hint: to a revision that doesn't. If you wish to keep tracking them, run
+			hint: to a revision that doesn’t. If you wish to keep tracking them, run
 			hint:     git add [<path>...]
-			hint: You can avoid this issue by adding --intent-to-add or -N flag to your
+			hint: You can avoid this issue by adding ‘--intent-to-add’ or ‘-N’ flag to your
 			hint: reset invocations.
 		EOF
 	)"
@@ -289,13 +291,13 @@ test_remote_head_file_missing_hint() (
 		cat <<-EOF
 			## master...(no upstream)
 
-			hint: file .git/refs/remotes/origin/HEAD not found.
+			hint: file ‘.git/refs/remotes/origin/HEAD’ not found.
 			hint: This file is used to guess the branch on a remote repository this branch will
 			hint: be merged to. The file can be missing if the remote was added to the repository
 			hint: that already existed locally, as opposed to creating a local repository by
 			hint: cloning from a remote. You can fix the issue by running this command:
 			hint:   git remote set-head origin --auto
-			hint: This is merely a hindrance to libstatus merge target guessing. It doesn't
+			hint: This is merely a hindrance to libstatus merge target guessing. It doesn’t
 			hint: impact any other git operations.
 		EOF
 	)"

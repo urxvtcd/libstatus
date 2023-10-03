@@ -262,13 +262,13 @@ print_current_and_target() (
 		target_ref_file="$(git rev-parse --git-path refs/remotes/"${REMOTE}"/HEAD)"
 		if ! test -e "${target_ref_file}"; then
 			printf "%s" "${COLOR_ADVICE}"
-			printf "hint: file %s not found.\n" "${target_ref_file}"
+			printf "hint: file ‘%s’ not found.\n" "${target_ref_file}"
 			printf "hint: This file is used to guess the branch on a remote repository this branch will\n"
 			printf "hint: be merged to. The file can be missing if the remote was added to the repository\n"
 			printf "hint: that already existed locally, as opposed to creating a local repository by\n"
 			printf "hint: cloning from a remote. You can fix the issue by running this command:\n"
 			printf "hint:   git remote set-head %s --auto\n" "${REMOTE}"
-			printf "hint: This is merely a hindrance to libstatus merge target guessing. It doesn't\n"
+			printf "hint: This is merely a hindrance to libstatus merge target guessing. It doesn’t\n"
 			printf "hint: impact any other git operations.\n"
 			printf "%s\n" "${WHITE}"
 			return
@@ -452,7 +452,7 @@ print_rebase_entries() (
 print_untracked_hint() (
 	if test "${UPSTREAM_CHECK_RESULT}" = "${UPSTREAM_UNTRACKED}"; then
 		printf "%s" "${COLOR_ADVICE}"
-		printf "hint: %s branch exists, but isn't marked as upstream.\n" "${UPSTREAM}"
+		printf "hint: ‘%s’ branch exists, but isn’t marked as upstream.\n" "${UPSTREAM}"
 		printf "hint: It is recommended to run:\n"
 		printf "hint:\n"
 		printf "hint:   git branch --set-upstream-to %s\n" "${UPSTREAM}"
@@ -495,12 +495,12 @@ print_intent_to_add_hint() (
 
 	if test -n "${lost_files}"; then
 		printf "%s" "${COLOR_ADVICE}"
-		printf "hint: Your last reset moved HEAD from a revision that tracked these paths:\n"
+		printf "hint: Your last reset moved ‘HEAD’ from a revision that tracked these paths:\n"
 		# shellcheck disable=SC2001
 		printf "%s\n" "${lost_files}" | sed -e "s/^/hint:    /"
-		printf "hint: to a revision that doesn't. If you wish to keep tracking them, run\n"
+		printf "hint: to a revision that doesn’t. If you wish to keep tracking them, run\n"
 		printf "hint:     git add [<path>...]\n"
-		printf "hint: You can avoid this issue by adding --intent-to-add or -N flag to your\n"
+		printf "hint: You can avoid this issue by adding ‘--intent-to-add’ or ‘-N’ flag to your\n"
 		printf "hint: reset invocations.\n"
 		printf "%s\n" "${WHITE}"
 	fi
@@ -543,7 +543,7 @@ print_mistracking_hint() {
 	if test "${UPSTREAM_CHECK_RESULT}" = "${UPSTREAM_MISTRACKED}"; then
 		upstream="$(git rev-parse --abbrev-ref '@{upstream}')"
 		printf "%s" "${COLOR_ADVICE}"
-		printf "hint: current '%s' branch tracks '%s', and probably shouldn't.\n" "${CURRENT}" "${upstream}"
+		printf "hint: current ‘%s’ branch tracks ‘%s’, and probably shouldn’t.\n" "${CURRENT}" "${upstream}"
 		printf "hint: you probably should remove the tracking with the following command:\n"
 		printf "hint:   git branch --unset-upstream\n"
 		printf "hint: or create a matching branch on a remote and track it:\n"
@@ -553,8 +553,8 @@ print_mistracking_hint() {
 	elif test "${UPSTREAM_CHECK_RESULT}" = "${UPSTREAM_MISTRACKED_EXISTS}"; then
 		upstream="$(git rev-parse --abbrev-ref '@{upstream}')"
 		printf "%s" "${COLOR_ADVICE}"
-		printf "hint: current '%s' branch tracks '%s',\n" "${CURRENT}" "${upstream}"
-		printf "hint: but probably should track '%s' instead.\n" "${EXPECTED_UPSTREAM}"
+		printf "hint: current ‘%s’ branch tracks ‘%s’,\n" "${CURRENT}" "${upstream}"
+		printf "hint: but probably should track ‘%s’ instead.\n" "${EXPECTED_UPSTREAM}"
 		printf "hint: run this command to fix this:\n"
 		printf "hint:   git branch --set-upstream-to %s" "${EXPECTED_UPSTREAM}"
 		printf "%s\n\n" "${WHITE}"
@@ -580,17 +580,17 @@ print_rebase_lost_merges_hint() (
 
 	if test "$((merges_new))" = 0 && test "$((merges_old))" != 0; then
 		printf "%s" "${COLOR_ADVICE}"
-		printf "hint: the branch before the rebase contained these merge commits:\n"
+		printf "hint: The branch before the rebase contained these merge commits:\n"
 		git log --oneline --merges "${new_base}..${old_tip}" | sed -e "s/^/hint:   /"
-		printf "hint: but the branch after the rebase contains no merge commits. this might be\n"
+		printf "hint: but the branch after the rebase contains no merge commits. This might be\n"
 		printf "hint: intentional, but can also mean that merge commits were lost during the\n"
-		printf "hint: rebase because you didn't pass the --rebase-merges flag. if this was not\n"
+		printf "hint: rebase because you didn’t pass the ‘--rebase-merges’ flag. If this was not\n"
 		printf "hint: intentional, you can run\n"
 		printf "hint:   git reset --hard ORIG_HEAD\n"
 		printf "hint: to reset the branch to the state before the rebase, and attempt the rebase\n"
 		printf "hint: again.\n"
 		printf "hint: If this was intentional and you wish this hint went away,\n"
-		printf "hint: perform a git commit --amend or a no-op git reset."
+		printf "hint: run ‘git commit --amend’ or perform a no-op ‘git reset’."
 		printf "%s\n\n" "${WHITE}"
 	fi
 )
