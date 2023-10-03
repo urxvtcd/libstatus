@@ -32,7 +32,7 @@ merge() (
 new_repo() (
 	repo_dir="$(mktemp -d)"
 
-	git -C "${repo_dir}" init --quiet "$@"
+	git -C "${repo_dir}" init --quiet --initial-branch master "$@"
 	git -C "${repo_dir}" config user.name 'David Plowie'
 	git -C "${repo_dir}" config user.email 'dplowie@gritte.rs'
 
