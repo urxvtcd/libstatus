@@ -547,7 +547,7 @@ print_mistracking_hint() {
 		printf "hint: you probably should remove the tracking with the following command:\n"
 		printf "hint:   git branch --unset-upstream\n"
 		printf "hint: or create a matching branch on a remote and track it:\n"
-		printf "hint:   git push --set-upstream %s %s" "${REMOTE}" "${EXPECTED_UPSTREAM}"
+		printf "hint:   git push --set-upstream %s %s" "${REMOTE}" "${CURRENT}"
 		printf "%s\n\n" "${WHITE}"
 
 	elif test "${UPSTREAM_CHECK_RESULT}" = "${UPSTREAM_MISTRACKED_EXISTS}"; then
